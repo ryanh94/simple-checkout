@@ -9,6 +9,9 @@
         "**/.pytest_cache/**": true
     },
     "editor.formatOnSave": true,
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": ["--line-length", "120"],
+    "python.linting.enabled": true,
     "python.analysis.extraPaths": [
         "./src"
     ],

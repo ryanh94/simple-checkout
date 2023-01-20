@@ -12,26 +12,43 @@ def checkout(product_source: ProductSource, basket: List[str]) -> int:
 
 def workout_price(product_list, basket):
     basket_occurances = Counter(basket)
-    price = 0
+    total_price = 0
     for product in product_list:
-        if product["Item"] in basket_occurances:
-            quantity = basket_occurances[product["Item"]]
-            
-            special_offer = product["Special Price"].split(" ")
-            if special_offer[0]:
-                quantity_needed_for_offer = int(special_offer[0])
-                offer_price = int(special_offer[2])
+        try:
+            if product["Item"] in basket_occurances:
+                quantity_in_basket = basket_occurances[product["Item"]]
 
-            if quantity >= quantity_needed_for_offer and special_offer[0]:
                 special_offer = product["Special Price"].split(" ")
-                quantity_needed_for_offer = int(special_offer[0])
-                offer_price = int(special_offer[2])
+                if special_offer[0] != "" and quantity_in_basket >= int(
+                    special_offer[0]
+                ):
+                    total_price += calculate_special_offer_price(
+                        special_offer, quantity_in_basket, int(product["Unit Price"])
+                    )
+                else:
+                    total_price += calculate_no_offer_price(
+                        int(product["Unit Price"]), quantity_in_basket
+                    )
+        except Exception as e:
+            # Log error rather than re raise, this would mean that checkout could continue
+            raise e
 
-                number_of_offers = int(quantity / quantity_needed_for_offer)
-                price += offer_price * number_of_offers
-                remainder_items = quantity % quantity_needed_for_offer
-                price += remainder_items * int(product["Unit Price"])
-            else:
-                price += quantity * int(product["Unit Price"])
+    return total_price
 
-    return price
+
+def calculate_special_offer_price(
+    special_offer: List, quantity_in_basket: int, unit_price: int
+) -> int:
+    quantity_needed_for_offer = int(special_offer[0])
+    offer_price = int(special_offer[2])
+
+    number_of_offers = int(quantity_in_basket / quantity_needed_for_offer)
+    remainder_items = quantity_in_basket % quantity_needed_for_offer
+
+    remainder_price = calculate_no_offer_price(unit_price, remainder_items)
+
+    return (offer_price * number_of_offers) + remainder_price
+
+
+def calculate_no_offer_price(unit_price: int, quantity: int) -> int:
+    return unit_price * quantity

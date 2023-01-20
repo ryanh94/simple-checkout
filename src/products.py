@@ -14,7 +14,7 @@ class ProductsByDict(ProductSource):
         return [
             {"Item": "A", "Unit Price": 50, "Special Price": "3 for 130"},
             {"Item": "B", "Unit Price": 30, "Special Price": "2 for 45"},
-            {"Item": "C", "Unit Price": 10, "Special Price": ""},
+            {"Item": "C", "Unit Price": "error", "Special Price": ""},
         ]
 
 
