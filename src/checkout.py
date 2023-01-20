@@ -16,16 +16,17 @@ def workout_price(product_list, basket):
     for product in product_list:
         if product["Item"] in basket_occurances:
             quantity = basket_occurances[product["Item"]]
-
+            
             special_offer = product["Special Price"].split(" ")
-            quantity_needed_for_offer = int(special_offer[0])
-            offer_price = int(special_offer[2])
+            if special_offer[0]:
+                quantity_needed_for_offer = int(special_offer[0])
+                offer_price = int(special_offer[2])
 
-            if quantity >= quantity_needed_for_offer:
+            if quantity >= quantity_needed_for_offer and special_offer[0]:
                 special_offer = product["Special Price"].split(" ")
                 quantity_needed_for_offer = int(special_offer[0])
                 offer_price = int(special_offer[2])
-                
+
                 number_of_offers = int(quantity / quantity_needed_for_offer)
                 price += offer_price * number_of_offers
                 remainder_items = quantity % quantity_needed_for_offer
